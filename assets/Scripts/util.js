@@ -106,7 +106,10 @@ function wordsearch(words, width, height, backwards = 0.5, dir = 4, lower = fals
       unplaced.push(originalword);
     } else {
       // answer[originalword] = position;
-      answer.push({[originalword]: position})
+      answer.push({
+        word: originalword,
+        coord: position
+      })
     }
   } // end word loop
 

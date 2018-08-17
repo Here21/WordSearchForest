@@ -88,14 +88,25 @@ cc.Class({
     },
 
     checkTargetWord: function() {
-        const tar = _.find(D.commonState.answer, (i) => {
-            let value = Object.values(i)[0];
-            let target = D.commonState.selectList.map(node => node.coord);
-            return JSON.stringify(value) === JSON.stringify(target) || JSON.stringify(value) === JSON.stringify(target.reverse())
+        const tar = _.find(D.commonState.answer, (el) => {
+            let target = D.commonState.selectList.map(el => el.node.coord);
+            return JSON.stringify(el.coord) === JSON.stringify(target) || JSON.stringify(el.coord) === JSON.stringify(target.reverse())
         })
         console.log(tar);
         if(tar) {
-
+            D.commonState.selectList.forEach(el => {
+                el.getComponent(cc.Sprite).spriteFrame = el.green;
+            });
+        } else {
+            let nodes = [... D.commonState.selectList];
+            nodes.forEach(el => {
+                el.getComponent(cc.Sprite).spriteFrame = el.red;
+            });
+            setTimeout(() => {
+                nodes.forEach(el => {
+                    el.getComponent(cc.Sprite).spriteFrame = el.yellow;
+                });
+            }, 500);
         }
         D.commonState.selectList = [];
     }

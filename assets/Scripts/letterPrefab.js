@@ -44,7 +44,7 @@ cc.Class({
     },
     onCollisionEnter: function (other, self) {
         console.log('---- letter --- !!!!!', this.node.coord);
-        D.commonState.selectList.push(this.node);
+        D.commonState.selectList.push(this);
     },
     start () {
         
