@@ -1,10 +1,12 @@
 import _ from 'lodash';
+import MEvent from './tools/MEvent';
+
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
-        rectNode: {
+        lineNode: {
             default: null,
             type: cc.Sprite
         }
@@ -15,20 +17,39 @@ cc.Class({
     onLoad () {
         this.startPoint = null;
         this.endPoint = null;
-        this.test = this.rectNode.getComponent(cc.BoxCollider);
+        this.lineCollider = this.lineNode.getComponent(cc.BoxCollider);
         cc.director.getCollisionManager().enabled = true;
         cc.director.getCollisionManager().enabledDebugDraw = true;
+
+        this.lineNode.node.opacity = 0;
+
         // this.rect = new cc.Rect();
         // this.rect.size = 30;
         // this.node.addChild(this.rect);
 
-        this.node.on('touchmove', function (event) {
-            // console.log('Mouse move');
+        this.node.on('touchstart', function(event) {
+            // 修正点击位置
             this.startPoint = event.getStartLocation();
+            this.lineNode.node.position = this.node.convertToNodeSpace(this.startPoint);
+            
+            this.lineNode.node.zIndex = 1;
+            this.lineNode.node.opacity = 100;
+
+            MEvent.addEvent('touch-first', function(ev) {
+                console.log('touch-first --->',ev);
+                this.lineNode.node.position = ev;
+            }, this);
+        }, this);
+
+
+        this.node.on('touchmove', function (event) {
+            MEvent.removeEventByType('touch-first');
+            // console.log('Mouse move');
+            // this.startPoint = event.getStartLocation();
             this.endPoint = event.getLocation();
 
             // 起点
-            this.rectNode.node.position = this.node.convertToNodeSpace(this.startPoint);
+            // this.lineNode.node.position = this.node.convertToNodeSpace(this.startPoint);
             // console.log('start:', this.startPoint, this.endPoint);
             // this.node.emit('slide', {
             //     start: this.startPoint,
@@ -41,14 +62,14 @@ cc.Class({
             let radian = Math.atan2(dt.x, dt.y); 
             let rotation = (180 * radian / Math.PI + 90) % 360;
             //旋转线条
-            this.rectNode.node.rotation = rotation;
+            this.lineNode.node.rotation = rotation;
             //设置宽度，我这里是用宽度改变的线条长度
-            this.rectNode.node.width = cc.pDistance(this.startPoint, this.endPoint);
-            // this.rectNode.Collider.size.width = cc.pDistance(this.startPoint, this.endPoint);
-            // this.test = this.rectNode.getComponent(cc.BoxCollider);
-            this.test.enabled = false;
-            this.test.size.width = cc.pDistance(this.startPoint, this.endPoint);
-            this.test.offset.x = cc.pDistance(this.startPoint, this.endPoint) / 2;
+            this.lineNode.node.width = cc.pDistance(this.startPoint, this.endPoint);
+            // this.lineNode.Collider.size.width = cc.pDistance(this.startPoint, this.endPoint);
+            // this.lineCollider = this.lineNode.getComponent(cc.BoxCollider);
+            this.lineCollider.enabled = false;
+            this.lineCollider.size.width = cc.pDistance(this.startPoint, this.endPoint);
+            this.lineCollider.offset.x = cc.pDistance(this.startPoint, this.endPoint) / 2;
             
             
             // console.log(this.node.convertToNodeSpace(this.startPoint));
@@ -57,12 +78,6 @@ cc.Class({
             // var ctx = this.node.getComponent(cc.Graphics);
             // ctx.moveTo(this.node.convertToNodeSpace(this.startPoint));
             // ctx.lineTo(this.node.convertToNodeSpace(this.endPoint));
-
-            // this.rect.x
-            // D.MEvent.emit('slide', {
-            //     start: { x: s.x, y: s.y },
-            //     end: { x: e.x, y: e.y },
-            // })
         }, this);
 
         this.node.on('touchend', function(event) {
@@ -70,8 +85,12 @@ cc.Class({
             this.startPoint = null;
             this.endPoint = null;
 
+            this.lineNode.node.width = 0;
+
+            console.log('------', D.commonState.selectList.map(el => el.node.coord));
+
             // 碰撞组件
-            this.test.enabled = true;
+            this.lineCollider.enabled = true;
 
             // TODO: 解决同步问题
             setTimeout(() => {

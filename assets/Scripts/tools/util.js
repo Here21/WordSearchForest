@@ -188,6 +188,7 @@ function directioninfo(word, direction, width, height) {
     dy: dy
   }
 }
+
 export {
     wordsearch
 }

@@ -1,4 +1,5 @@
-import { wordsearch } from './util';
+import { wordsearch } from './tools/util';
+import MEvent from './tools/MEvent';
 
 cc.Class({
     extends: cc.Component,
@@ -29,13 +30,11 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-
+        console.log(MEvent);
         // 定义全局变量
         D.commonState.selectList = [];
         D.commonState.words = ['dog', 'cat', 'Tes', 'book', 'catepaer', 'answer'];
-
-
-        // console.log(puzzle);
+        // D.common.MEvent = MEvent;
         
         // 初始化棋盘
         const puzzle = wordsearch(D.commonState.words, 6, 6, 1, 2);
@@ -59,6 +58,8 @@ cc.Class({
             const wordNode = cc.instantiate(this.wordPrefab);
             let text = wordNode.getChildByName('text').getComponent(cc.Label);
             text.string = puzzle.answer[w].word;
+            let sign = wordNode.getChildByName('rightSign');
+            sign.opacity = 0;
             this.wordBoardList.addChild(wordNode);
         }
        

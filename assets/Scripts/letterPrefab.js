@@ -1,12 +1,4 @@
-// Learn cc.Class:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/class.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/class.html
-// Learn Attribute:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/reference/attributes.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - [Chinese] http://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
-//  - [English] http://www.cocos2d-x.org/docs/creator/en/scripting/life-cycle-callbacks.html
+import MEvent from './tools/MEvent';
 
 cc.Class({
     extends: cc.Component,
@@ -44,13 +36,14 @@ cc.Class({
     },
     onCollisionEnter: function (other, self) {
         console.log('---- letter --- !!!!!', this.node.coord);
+        MEvent.dispatchEvent('touch-first', this.node.position);
         D.commonState.selectList.push(this);
     },
     start () {
         
     },
     onHandleMatch: function(event) {
-        console.log(event);
+        console.log('match!!', event);
         if (cc.Intersection.lineRect(event.start, event.end, this.node)) {
             console.log('---------------',this.node.x, this.node.y);
             this.letter.node.opacity = '30'
